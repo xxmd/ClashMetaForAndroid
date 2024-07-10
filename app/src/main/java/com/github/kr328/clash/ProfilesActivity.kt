@@ -10,6 +10,7 @@ import com.github.kr328.clash.common.util.ticker
 import com.github.kr328.clash.design.ProfilesDesign
 import com.github.kr328.clash.design.ui.ToastDuration
 import com.github.kr328.clash.R
+import com.github.kr328.clash.common.log.Log
 import com.github.kr328.clash.service.model.Profile
 import com.github.kr328.clash.util.withProfile
 import kotlinx.coroutines.Dispatchers
@@ -64,10 +65,13 @@ class ProfilesActivity : BaseActivity<ProfilesDesign>() {
                             startActivity(PropertiesActivity::class.intent.setUUID(it.profile.uuid))
                         is ProfilesDesign.Request.Active -> {
                             withProfile {
-                                if (it.profile.imported)
+                                if (it.profile.imported) {
+                                    Log.i("setActive")
                                     setActive(it.profile)
-                                else
+                                } else {
+                                    Log.i("requestSave")
                                     design.requestSave(it.profile)
+                                }
                             }
                         }
                         is ProfilesDesign.Request.Duplicate -> {

@@ -1,6 +1,7 @@
 package com.github.kr328.clash
 
 import androidx.activity.result.contract.ActivityResultContracts
+import com.github.kr328.clash.common.log.Log
 import com.github.kr328.clash.common.util.intent
 import com.github.kr328.clash.common.util.ticker
 import com.github.kr328.clash.design.MainDesign
@@ -10,10 +11,16 @@ import com.github.kr328.clash.util.stopClashService
 import com.github.kr328.clash.util.withClash
 import com.github.kr328.clash.util.withProfile
 import com.github.kr328.clash.core.bridge.*
+import com.github.kr328.clash.core.model.FetchStatus
+import com.github.kr328.clash.design.model.ProfileProvider
+import com.github.kr328.clash.service.model.Profile
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.selects.select
 import kotlinx.coroutines.withContext
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 class MainActivity : BaseActivity<MainDesign>() {
@@ -23,6 +30,7 @@ class MainActivity : BaseActivity<MainDesign>() {
         setContentDesign(design)
 
         design.fetch()
+        design.autoImportConfig()
 
         val ticker = ticker(TimeUnit.SECONDS.toMillis(1))
 
@@ -34,6 +42,7 @@ class MainActivity : BaseActivity<MainDesign>() {
                         Event.ServiceRecreated,
                         Event.ClashStop, Event.ClashStart,
                         Event.ProfileLoaded, Event.ProfileChanged -> design.fetch()
+
                         else -> Unit
                     }
                 }
@@ -45,18 +54,25 @@ class MainActivity : BaseActivity<MainDesign>() {
                             else
                                 design.startClash()
                         }
+
                         MainDesign.Request.OpenProxy ->
                             startActivity(ProxyActivity::class.intent)
+
                         MainDesign.Request.OpenProfiles ->
                             startActivity(ProfilesActivity::class.intent)
+
                         MainDesign.Request.OpenProviders ->
                             startActivity(ProvidersActivity::class.intent)
+
                         MainDesign.Request.OpenLogs ->
                             startActivity(LogsActivity::class.intent)
+
                         MainDesign.Request.OpenSettings ->
                             startActivity(SettingsActivity::class.intent)
+
                         MainDesign.Request.OpenHelp ->
                             startActivity(HelpActivity::class.intent)
+
                         MainDesign.Request.OpenAbout ->
                             design.showAbout(queryAppVersionName())
                     }
@@ -85,6 +101,47 @@ class MainActivity : BaseActivity<MainDesign>() {
 
         withProfile {
             setProfileName(queryActive()?.name)
+        }
+    }
+
+    private suspend fun MainDesign.autoImportConfig() {
+        withProfile {
+            val providerList = queryAll()
+            if (providerList.size == 0) {
+                createDefaultProfile {
+                    withContext(Dispatchers.Main) {
+                        withProcessing { updateStatus ->
+                            coroutineScope {
+                                commit(it.uuid) {
+                                    launch {
+                                        Log.i(it.toString())
+                                        updateStatus(it)
+                                    }
+                                }
+                                setActive(it)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private suspend fun createDefaultProfile(block: suspend (profile: Profile) -> Unit) {
+        withProfile {
+            val name = getString(R.string.new_profile)
+            val uuid: UUID = create(Profile.Type.Url, name)
+            var profile = queryByUUID(uuid)
+            if (profile != null) {
+                profile = profile.copy(
+                    name = "佛跳墙",
+                    source = "https://ftq.ink/group",
+                    interval = TimeUnit.MINUTES.toMillis(60 * 24)
+                )
+                Log.i("profile: " + profile)
+                patch(profile.uuid, profile.name, profile.source, profile.interval)
+                block(profile)
+            }
         }
     }
 
@@ -126,7 +183,10 @@ class MainActivity : BaseActivity<MainDesign>() {
 
     private suspend fun queryAppVersionName(): String {
         return withContext(Dispatchers.IO) {
-            packageManager.getPackageInfo(packageName, 0).versionName + "\n" + Bridge.nativeCoreVersion().replace("_", "-")
+            packageManager.getPackageInfo(
+                packageName,
+                0
+            ).versionName + "\n" + Bridge.nativeCoreVersion().replace("_", "-")
         }
     }
 }

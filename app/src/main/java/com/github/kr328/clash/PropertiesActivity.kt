@@ -1,5 +1,6 @@
 package com.github.kr328.clash
 
+import com.github.kr328.clash.common.log.Log
 import com.github.kr328.clash.common.util.intent
 import com.github.kr328.clash.common.util.setUUID
 import com.github.kr328.clash.common.util.uuid
@@ -29,6 +30,7 @@ class PropertiesActivity : BaseActivity<PropertiesDesign>() {
         setContentDesign(design)
 
         defer {
+            Log.i("in defer block")
             canceled = true
 
             withProfile { release(uuid) }
@@ -39,9 +41,11 @@ class PropertiesActivity : BaseActivity<PropertiesDesign>() {
                 events.onReceive {
                     when (it) {
                         Event.ActivityStop -> {
+                            Log.i("ActivityStop")
                             val profile = design.profile
 
                             if (!canceled && profile != original) {
+                                Log.i("ActivityStop profile diff")
                                 withProfile {
                                     patch(profile.uuid, profile.name, profile.source, profile.interval)
                                 }
@@ -88,13 +92,18 @@ class PropertiesActivity : BaseActivity<PropertiesDesign>() {
             }
             else -> {
                 try {
+                    Log.i("verifyAndCommit")
                     withProcessing { updateStatus ->
+                        Log.i("withProcessing thread: " + Thread.currentThread().name)
                         withProfile {
+                            Log.i("withProfile thread: " + Thread.currentThread().name)
                             patch(profile.uuid, profile.name, profile.source, profile.interval)
 
                             coroutineScope {
                                 commit(profile.uuid) {
                                     launch {
+                                        Log.i("coroutineScope thread: " + Thread.currentThread().name)
+                                        Log.i("it: " + it)
                                         updateStatus(it)
                                     }
                                 }

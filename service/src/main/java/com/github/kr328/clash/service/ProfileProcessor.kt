@@ -30,12 +30,12 @@ object ProfileProcessor {
     private val processLock = Mutex()
 
     suspend fun apply(context: Context, uuid: UUID, callback: IFetchObserver? = null) {
+        Log.i("ProfileProcessor apply")
         withContext(NonCancellable) {
             processLock.withLock {
                 val snapshot = profileLock.withLock {
                     val pending = PendingDao().queryByUUID(uuid)
                         ?: throw IllegalArgumentException("profile $uuid not found")
-
                     pending.enforceFieldValid()
 
                     context.processingDir.deleteRecursively()
@@ -47,11 +47,14 @@ object ProfileProcessor {
                     pending
                 }
 
+                Log.i("snapshot: " + snapshot)
                 val force = snapshot.type != Profile.Type.File
                 var cb = callback
 
+                Log.i("before fetchAndValid")
                 Clash.fetchAndValid(context.processingDir, snapshot.source, force) {
                     try {
+                        Log.i("Clash fetchAndValid state: " + it)
                         cb?.updateStatus(it)
                     } catch (e: Exception) {
                         cb = null
@@ -121,6 +124,7 @@ object ProfileProcessor {
                                 ImportedDao().insert(new)
                             }
 
+                            Log.i("PendingDao remove")
                             PendingDao().remove(snapshot.uuid)
 
                             context.pendingDir.resolve(snapshot.uuid.toString())

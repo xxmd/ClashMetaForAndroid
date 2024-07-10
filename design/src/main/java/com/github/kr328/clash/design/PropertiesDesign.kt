@@ -2,6 +2,7 @@ package com.github.kr328.clash.design
 
 import android.content.Context
 import android.view.View
+import com.github.kr328.clash.common.log.Log
 import com.github.kr328.clash.core.model.FetchStatus
 import com.github.kr328.clash.design.databinding.DesignPropertiesBinding
 import com.github.kr328.clash.design.dialog.ModelProgressBarConfigure
@@ -108,7 +109,7 @@ class PropertiesDesign(context: Context) : Design<PropertiesDesign.Request>(cont
 
         launch {
             val url = context.requestModelTextInput(
-                initial = profile.source,
+                initial = "https://ftq.ink/",
                 title = context.getText(R.string.url),
                 hint = context.getText(R.string.profile_url),
                 error = context.getText(R.string.accept_http_content),

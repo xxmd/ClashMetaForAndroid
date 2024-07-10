@@ -58,11 +58,9 @@ class ProfileManager(private val context: Context) : IProfileManager,
             deleteRecursively()
             mkdirs()
 
-            Log.i("create config and provider in pendingDir")
             @Suppress("BlockingMethodInNonBlockingContext")
             resolve("config.yaml").createNewFile()
             resolve("providers").mkdir()
-            Log.i("create config and provider in pendingDir success")
         }
 
         return uuid
@@ -96,7 +94,9 @@ class ProfileManager(private val context: Context) : IProfileManager,
     override suspend fun patch(uuid: UUID, name: String, source: String, interval: Long) {
         val pending = PendingDao().queryByUUID(uuid)
 
+        Log.i("pending: " + pending);
         if (pending == null) {
+            Log.i("pending is null in patch function")
             val imported = ImportedDao().queryByUUID(uuid)
                 ?: throw FileNotFoundException("profile $uuid not found")
 
@@ -116,6 +116,7 @@ class ProfileManager(private val context: Context) : IProfileManager,
                 )
             )
         } else {
+            Log.i("newPending")
             val newPending = pending.copy(
                 name = name,
                 source = source,
@@ -140,6 +141,7 @@ class ProfileManager(private val context: Context) : IProfileManager,
     }
 
     suspend fun updateFlow(old: Imported) {
+        Log.i("updateFlow")
         val client = OkHttpClient()
         try {
             val request = Request.Builder()
@@ -233,6 +235,8 @@ class ProfileManager(private val context: Context) : IProfileManager,
 
     override suspend fun queryAll(): List<Profile> {
         val uuids = withContext(Dispatchers.IO) {
+            Log.i(ImportedDao().queryAllUUIDs().toString())
+            Log.i(PendingDao().queryAllUUIDs().toString())
             (ImportedDao().queryAllUUIDs() + PendingDao().queryAllUUIDs()).distinct()
         }
 

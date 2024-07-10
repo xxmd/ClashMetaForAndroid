@@ -1,6 +1,7 @@
 package com.github.kr328.clash.design.dialog
 
 import android.content.Context
+import com.github.kr328.clash.common.log.Log
 import com.github.kr328.clash.design.databinding.DialogFetchStatusBinding
 import com.github.kr328.clash.design.util.layoutInflater
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -19,6 +20,7 @@ interface ModelProgressBarScope {
 }
 
 suspend fun Context.withModelProgressBar(block: suspend ModelProgressBarScope.() -> Unit) {
+    Log.i("withModelProgressBar Thread: " + Thread.currentThread().name)
     val view = DialogFetchStatusBinding.inflate(this.layoutInflater)
     val dialog = MaterialAlertDialogBuilder(this)
         .setCancelable(false)
