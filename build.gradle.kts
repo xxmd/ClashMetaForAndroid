@@ -34,14 +34,14 @@ subprojects {
     extensions.configure<BaseExtension> {
         defaultConfig {
             if (isApp) {
-                applicationId = "com.github.metacubex.clash"
+                applicationId = "ftq.ink"
             }
 
             minSdk = 21
             targetSdk = 31
 
-            versionName = "2.10.1"
-            versionCode = 210001
+            versionName = "1.0"
+            versionCode = 1
 
             resValue("string", "release_name", "v$versionName")
             resValue("integer", "release_code", "$versionCode")

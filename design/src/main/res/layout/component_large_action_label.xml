@@ -5,8 +5,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingVertical="@dimen/large_item_padding_vertical">
+        android:orientation="horizontal">
 
         <View
             android:id="@+id/icon_view"
@@ -15,7 +14,8 @@
             android:layout_marginHorizontal="@dimen/large_item_header_margin_horizontal" />
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/large_item_tailing_margin_horizontal"
             android:orientation="vertical">
@@ -33,5 +33,11 @@
                 android:layout_marginTop="@dimen/large_item_text_margin"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
         </LinearLayout>
+
+        <View
+            android:id="@+id/icon_extra"
+            android:layout_width="@dimen/large_item_header_component_size"
+            android:layout_height="@dimen/large_item_header_component_size"
+            android:layout_marginEnd="@dimen/large_item_header_margin_horizontal" />
     </LinearLayout>
 </layout>

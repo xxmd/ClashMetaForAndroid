@@ -1,8 +1,11 @@
 package com.github.kr328.clash.design
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.view.View
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.getSystemService
 import com.github.kr328.clash.common.log.Log
 import com.github.kr328.clash.core.model.FetchStatus
 import com.github.kr328.clash.core.model.TunnelState
@@ -11,6 +14,7 @@ import com.github.kr328.clash.design.databinding.DesignAboutBinding
 import com.github.kr328.clash.design.databinding.DesignMainBinding
 import com.github.kr328.clash.design.dialog.ModelProgressBarConfigure
 import com.github.kr328.clash.design.dialog.withModelProgressBar
+import com.github.kr328.clash.design.ui.ToastDuration
 import com.github.kr328.clash.design.util.layoutInflater
 import com.github.kr328.clash.design.util.resolveThemedColor
 import com.github.kr328.clash.design.util.root
@@ -27,6 +31,7 @@ class MainDesign(context: Context) : Design<MainDesign.Request>(context) {
         OpenSettings,
         OpenHelp,
         OpenAbout,
+        CopyQQGroupCount,
     }
 
     private val binding = DesignMainBinding
@@ -128,6 +133,15 @@ class MainDesign(context: Context) : Design<MainDesign.Request>(context) {
                 isIndeterminate = false
                 max = status.max
                 progress = status.progress
+            }
+        }
+    }
+
+     suspend fun copyQQGroupCount() {
+        val data = ClipData.newPlainText("QQGroupCount", context.getString(R.string.qq_group_account))
+        context.getSystemService<ClipboardManager>()?.setPrimaryClip(data)
+        showToast("复制群号成功", ToastDuration.Long) {
+            setAction(R.string.ok) {
             }
         }
     }

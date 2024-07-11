@@ -155,7 +155,7 @@ class ProfileWorker : BaseService() {
         val intent = PendingIntent.getActivity(
             this,
             id,
-            Intent().setComponent(Components.PROPERTIES_ACTIVITY).setUUID(uuid),
+            Intent().setComponent(Components.MAIN_ACTIVITY).setUUID(uuid),
             pendingIntentFlags(PendingIntent.FLAG_UPDATE_CURRENT)
         )
 

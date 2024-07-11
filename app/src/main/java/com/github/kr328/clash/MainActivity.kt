@@ -75,6 +75,9 @@ class MainActivity : BaseActivity<MainDesign>() {
 
                         MainDesign.Request.OpenAbout ->
                             design.showAbout(queryAppVersionName())
+
+                        MainDesign.Request.CopyQQGroupCount ->
+                            design.copyQQGroupCount()
                     }
                 }
                 if (clashRunning) {
@@ -134,7 +137,7 @@ class MainActivity : BaseActivity<MainDesign>() {
             var profile = queryByUUID(uuid)
             if (profile != null) {
                 profile = profile.copy(
-                    name = "佛跳墙",
+                    name = getString(R.string.application_name),
                     source = "https://ftq.ink/group",
                     interval = TimeUnit.MINUTES.toMillis(60 * 24)
                 )

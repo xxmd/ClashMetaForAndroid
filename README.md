@@ -1,4 +1,4 @@
-## Clash Meta for Android
+## 佛跳墙VPN
 
 A Graphical user interface of [Clash.Meta](https://github.com/MetaCubeX/Clash.Meta) for Android
 

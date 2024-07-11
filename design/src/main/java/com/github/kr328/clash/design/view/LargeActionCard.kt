@@ -35,6 +35,12 @@ class LargeActionCard @JvmOverloads constructor(
             binding.iconView.background = value
         }
 
+    var iconExtra: Drawable?
+        get() = binding.iconExtra.background
+        set(value) {
+            binding.iconExtra.background = value
+        }
+
     init {
         context.resolveClickableAttrs(attributeSet, defStyleAttr) {
             isFocusable = focusable(true)
@@ -50,6 +56,7 @@ class LargeActionCard @JvmOverloads constructor(
         ).apply {
             try {
                 icon = getDrawable(R.styleable.LargeActionCard_icon)
+                iconExtra = getDrawable(R.styleable.LargeActionCard_iconExtra)
                 text = getString(R.styleable.LargeActionCard_text)
                 subtext = getString(R.styleable.LargeActionCard_subtext)
             } finally {
