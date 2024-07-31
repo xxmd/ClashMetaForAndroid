@@ -17,6 +17,7 @@ buildscript {
         classpath(libs.build.kotlin.serialization)
         classpath(libs.build.ksp)
         classpath(libs.build.golang)
+        classpath(libs.build.firebase)
     }
 }
 
@@ -38,7 +39,7 @@ subprojects {
             }
 
             minSdk = 21
-            targetSdk = 31
+            targetSdk = 33
 
             versionName = "1.1"
             versionCode = 11
@@ -82,7 +83,7 @@ subprojects {
                 buildConfigField("boolean", "PREMIUM", "Boolean.parseBoolean(\"false\")")
 
                 if (isApp) {
-                    applicationIdSuffix = ".meta"
+//                    applicationIdSuffix = ".meta"
                 }
             }
 
@@ -94,7 +95,7 @@ subprojects {
                 buildConfigField("boolean", "PREMIUM", "Boolean.parseBoolean(\"false\")")
 
                 if (isApp) {
-                    applicationIdSuffix = ".meta"
+//                    applicationIdSuffix = ".meta"
                 }
             }
         }

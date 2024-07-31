@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "384445425000",
+    "project_id": "ftqvpn-5eae6",
+    "storage_bucket": "ftqvpn-5eae6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:384445425000:android:782db23a0d8de9af34a2dd",
+        "android_client_info": {
+          "package_name": "ftq.ink"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_8rC9ove9SkNbOXxzkuD0DREWeuh2mV0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

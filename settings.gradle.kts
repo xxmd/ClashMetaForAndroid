@@ -18,9 +18,10 @@ dependencyResolutionManagement {
     versionCatalogs {
         create("libs") {
             val agp = "7.2.1"
-            val kotlin = "1.7.0"
-            val ksp = "$kotlin-1.0.6"
+            val kotlin = "1.9.0"
+            val ksp = "1.9.0-1.0.11"
             val golang = "1.0.4"
+            val firebase = "4.3.0"
             val coroutine = "1.7.3"
             val coreKtx = "1.8.0"
             val activity = "1.5.0"
@@ -40,6 +41,7 @@ dependencyResolutionManagement {
             library("build-kotlin-serialization", "org.jetbrains.kotlin:kotlin-serialization:$kotlin")
             library("build-ksp", "com.google.devtools.ksp:symbol-processing-gradle-plugin:$ksp")
             library("build-golang", "com.github.kr328.golang:gradle-plugin:$golang")
+            library("build-firebase", "com.google.gms:google-services:$firebase")
             library("kotlin-coroutine", "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine")
             library("kotlin-serialization-json", "org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization")
             library("androidx-core", "androidx.core:core-ktx:$coreKtx")
