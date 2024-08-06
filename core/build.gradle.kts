@@ -1,5 +1,6 @@
 import com.github.kr328.golang.GolangBuildTask
 import com.github.kr328.golang.GolangPlugin
+import org.jetbrains.kotlin.cli.jvm.main
 import java.io.FileOutputStream
 import java.net.URL
 import java.time.Duration
@@ -8,7 +9,6 @@ plugins {
     kotlin("android")
     id("com.android.library")
     id("kotlinx-serialization")
-    id("golang-android")
 }
 
 val geoipDatabaseUrl =
@@ -17,31 +17,12 @@ val geoipInvalidate = Duration.ofDays(7)!!
 val geoipOutput = buildDir.resolve("intermediates/golang_blob")
 val golangSource = file("src/main/golang/native")
 
-golang {
-    sourceSets {
-        create("meta-alpha") {
-            tags.set(listOf("foss","with_gvisor","cmfa"))
-            srcDir.set(file("src/foss/golang"))
-        }
-        create("meta") {
-            tags.set(listOf("foss","with_gvisor","cmfa"))
-            srcDir.set(file("src/foss/golang"))
-        }
-        all {
-            fileName.set("libclash.so")
-            packageName.set("cfa/native")
-        }
-    }
-}
-
 android {
     productFlavors {
         all {
             externalNativeBuild {
                 cmake {
                     arguments("-DGO_SOURCE:STRING=${golangSource}")
-                    arguments("-DGO_OUTPUT:STRING=${GolangPlugin.outputDirOf(project, null, null)}")
-                    arguments("-DFLAVOR_NAME:STRING=$name")
                 }
             }
         }

@@ -1,8 +1,10 @@
 @file:Suppress("UNUSED_VARIABLE")
 
+import com.android.build.api.variant.ApplicationVariant
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.BaseExtension
 import java.net.URL
+import java.text.SimpleDateFormat
 import java.util.*
 
 buildscript {
@@ -49,14 +51,13 @@ subprojects {
 
             externalNativeBuild {
                 cmake {
-                    abiFilters("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
+                    abiFilters("arm64-v8a")
                 }
             }
 
             if (!isApp) {
                 consumerProguardFiles("consumer-rules.pro")
             } else {
-                setProperty("archivesBaseName", "cmfa-$versionName")
             }
         }
 
@@ -73,55 +74,16 @@ subprojects {
         }
 
         productFlavors {
-            flavorDimensions("feature")
 
-            create("meta-alpha") {
+            flavorDimensions("feature")
+            create("meta") {
                 isDefault = true
                 dimension = flavorDimensionList[0]
-                versionNameSuffix = ".Meta-Alpha"
-
-                buildConfigField("boolean", "PREMIUM", "Boolean.parseBoolean(\"false\")")
-
-                if (isApp) {
-//                    applicationIdSuffix = ".meta"
-                }
-            }
-
-            create("meta") {
-
-                dimension = flavorDimensionList[0]
-                versionNameSuffix = ".Meta"
-
-                buildConfigField("boolean", "PREMIUM", "Boolean.parseBoolean(\"false\")")
-
-                if (isApp) {
-//                    applicationIdSuffix = ".meta"
-                }
             }
         }
 
         sourceSets {
             getByName("meta") {
-                java.srcDirs("src/foss/java")
-            }
-            getByName("meta-alpha") {
-                java.srcDirs("src/foss/java")
-            }
-        }
-
-        signingConfigs {
-            val keystore = rootProject.file("signing.properties")
-            if (keystore.exists()) {
-                create("release") {
-                    val prop = Properties().apply {
-                        keystore.inputStream().use(this::load)
-                    }
-
-                    storeFile = rootProject.file("release.keystore")
-                    storePassword = prop.getProperty("keystore.password")!!
-                    keyAlias = prop.getProperty("key.alias")!!
-                    keyPassword = prop.getProperty("key.password")!!
-                }
             }
         }
 
@@ -129,7 +91,6 @@ subprojects {
             named("release") {
                 isMinifyEnabled = isApp
                 isShrinkResources = isApp
-                signingConfig = signingConfigs.findByName("release")
                 proguardFiles(
                     getDefaultProguardFile("proguard-android-optimize.txt"),
                     "proguard-rules.pro"
@@ -152,7 +113,9 @@ subprojects {
             splits {
                 abi {
                     isEnable = true
-                    isUniversalApk = true
+                    reset()
+                    include("arm64-v8a")
+                    isUniversalApk = false
                 }
             }
         }

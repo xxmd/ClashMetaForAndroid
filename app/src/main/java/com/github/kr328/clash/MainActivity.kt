@@ -1,19 +1,20 @@
 package com.github.kr328.clash
 
+import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import com.github.kr328.clash.common.log.Log
 import com.github.kr328.clash.common.util.intent
 import com.github.kr328.clash.common.util.ticker
+import com.github.kr328.clash.core.bridge.Bridge
 import com.github.kr328.clash.design.MainDesign
 import com.github.kr328.clash.design.ui.ToastDuration
+import com.github.kr328.clash.service.model.Profile
 import com.github.kr328.clash.util.startClashService
 import com.github.kr328.clash.util.stopClashService
 import com.github.kr328.clash.util.withClash
 import com.github.kr328.clash.util.withProfile
-import com.github.kr328.clash.core.bridge.*
-import com.github.kr328.clash.core.model.FetchStatus
-import com.github.kr328.clash.design.model.ProfileProvider
-import com.github.kr328.clash.service.model.Profile
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.logEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.isActive
@@ -23,7 +24,15 @@ import kotlinx.coroutines.withContext
 import java.util.*
 import java.util.concurrent.TimeUnit
 
+
 class MainActivity : BaseActivity<MainDesign>() {
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
+    }
+
     override suspend fun main() {
         val design = MainDesign(this)
 
@@ -49,10 +58,16 @@ class MainActivity : BaseActivity<MainDesign>() {
                 design.requests.onReceive {
                     when (it) {
                         MainDesign.Request.ToggleStatus -> {
-                            if (clashRunning)
+                            if (clashRunning) {
                                 stopClashService()
-                            else
+                                firebaseAnalytics.logEvent("stopClashService") {
+                                }
+                            }
+                            else {
                                 design.startClash()
+                                firebaseAnalytics.logEvent("startClash") {
+                                }
+                            }
                         }
 
                         MainDesign.Request.OpenProxy ->
@@ -76,8 +91,11 @@ class MainActivity : BaseActivity<MainDesign>() {
                         MainDesign.Request.OpenAbout ->
                             design.showAbout(queryAppVersionName())
 
-                        MainDesign.Request.CopyQQGroupCount ->
+                        MainDesign.Request.CopyQQGroupCount ->{
                             design.copyQQGroupCount()
+                        }
+
+
                     }
                 }
                 if (clashRunning) {
