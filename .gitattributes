@@ -2,3 +2,9 @@
 
 *.bat text eol=crlf
 *.jar binary
+
+# Bundled GeoFiles must retain their original bytes.
+app/src/main/assets/*.dat binary
+app/src/main/assets/*.metadb binary
+app/src/main/assets/*.mmdb binary
+app/src/main/assets/*.7z binary
